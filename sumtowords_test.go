@@ -29,3 +29,24 @@ func TestSumToString(t *testing.T) {
 	}
 
 }
+
+func TestStringToNotesAndCoins(t *testing.T) {
+	var tests = []struct {
+		input string
+		wantNotes string
+		wantCoins string
+	}{
+		{"123456789.10", "123456789", "10"},
+		{"1234567890123.004", "1234567890123", "00"},
+		{"1.0059", "1", "01"},
+
+	}
+
+	for _, test := range tests {
+		if got, got2 := StringToNotesAndCoins(test.input); got != test.wantNotes || got2 != test.wantCoins {
+			t.Errorf("StringToNotesAndCoins(%q) = %v.%v", test.input, got, got2)
+		}
+	}
+
+
+}

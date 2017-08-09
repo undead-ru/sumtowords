@@ -1,2 +1,2 @@
 # sumtowords
-Translate digital amount of rubles to words
+Translate digital amount of rubles to russian words

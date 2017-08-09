@@ -1,6 +1,7 @@
 package sumtowords
 
 import (
+	"fmt"
 	"math/big"
 	"regexp"
 	"strings"
@@ -11,17 +12,19 @@ var (
 	Kopeks  = -2
 )
 
-func SumToString(d string, currency int, gender bool) (res string) {
-	matched, _ := regexp.MatchString(`^\d+$`, d)
-	if matched == false {
-		return "ОШИБКА, НА ВВОДЕ НЕ ЧИСЛО: " + d
+var ReSumm = regexp.MustCompile(`^\d+([\.|\,]){0,1}\d*$`)
+
+func SumToString(d string, currency int, gender bool) (res string, err error) {
+
+	if ReSumm.MatchString(d) == false {
+		return "", fmt.Errorf("Summ pattern didn't match")
 	}
 
 	if d == "0" || d == "00" {
 		if currency == Roubles {
-			return "ноль рублей"
+			return "ноль рублей", nil
 		} else {
-			return "ноль копеек"
+			return "ноль копеек", nil
 		}
 	}
 
@@ -86,7 +89,7 @@ func SumToString(d string, currency int, gender bool) (res string) {
 		default:
 		}
 	}
-	return
+	return res, nil
 }
 
 type numeralTypes struct {
@@ -146,15 +149,17 @@ var numbers = map[string]numberTypes{
 	"900": numberTypes{a: "девятьсот "},
 }
 
-func BigFloatToNotesAndCoins(d *big.Float) (notes, coins string) {
+func BigFloatToNotesAndCoins(d *big.Float) (notes, coins string, err error) {
+
 	s := strings.Split(d.SetMode(big.AwayFromZero).Text('f', 2), ".")
 	notes = s[0]
 
 	if len(notes) > 14 {
-		notes = "сумма более 999 триллионов"
+		err = fmt.Errorf("Summ more than 999 billions")
 	}
 
 	coins = "00"
+
 	if len(s) > 1 {
 		coins = s[1]
 		if len(coins) == 1 {
@@ -164,16 +169,17 @@ func BigFloatToNotesAndCoins(d *big.Float) (notes, coins string) {
 	return
 }
 
-func StringToNotesAndCoins(d string) (notes, coins string) {
-	re := regexp.MustCompile(`^\d+([\.|\,])*\d*$`)
-	if re.MatchString(d) == false {
-		notes = "ОШИБКА, НЕ ЧИСЛО НА ВВОДЕ: " + d
+func StringToNotesAndCoins(d string) (notes, coins string, err error) {
+
+	if ReSumm.MatchString(d) == false {
+		err = fmt.Errorf("Summ is not a digit: %s", d)
 	} else {
-		d1 := strings.Replace(d, ",", ".", -1)
-		if n, _, err := big.ParseFloat(d1, 10, 53, big.AwayFromZero); err == nil {
-			notes, coins = BigFloatToNotesAndCoins(n)
+		if n, _, err := big.ParseFloat(strings.Replace(d, ",", ".", -1), 10, 53, big.AwayFromZero); err == nil {
+
+			notes, coins, err = BigFloatToNotesAndCoins(n)
+
 		} else {
-			notes = "ОШИБКА, НЕ big.Float: " + d
+			err = fmt.Errorf("Summ is not a big.Float: %s", d)
 		}
 	}
 	return

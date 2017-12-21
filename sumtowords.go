@@ -183,7 +183,7 @@ func StringToNotesAndCoins(d string) (notes, coins string, err error) {
 			notes, coins, err = BigFloatToNotesAndCoins(n)
 		} else {
 			err = fmt.Errorf("summ is not a big.Float: %s", d)
-			return
+			return "","", err
 		}
 	}
 	return

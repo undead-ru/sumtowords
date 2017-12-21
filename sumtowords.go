@@ -8,11 +8,13 @@ import (
 )
 
 var (
+	// Тип преобразуемой строки: рубли
 	Roubles = -1
+	// Тип преобразуемой строки: копейки
 	Kopeks  = -2
 )
 
-// Resumm регулярное выражение для разбора текстового представления числа с плавающей запятой
+// ReSumm регулярное выражение для разбора текстового представления числа с плавающей запятой
 var ReSumm = regexp.MustCompile(`^\d+([\.|\,]){0,1}\d*$`)
 
 // SumToString переводит числовое представление суммы в рублях в текстовое
@@ -25,9 +27,8 @@ func SumToString(d string, currency int, gender bool) (res string, err error) {
 	if d == "0" || d == "00" {
 		if currency == Roubles {
 			return "ноль рублей", nil
-		} else {
-			return "ноль копеек", nil
 		}
+			return "ноль копеек", nil
 	}
 
 	s := strings.Split(d, "")

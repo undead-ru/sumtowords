@@ -11,7 +11,7 @@ var (
 	// Roubles Тип преобразуемой строки: рубли
 	Roubles = -1
 	// Kopeks Тип преобразуемой строки: копейки
-	Kopeks  = -2
+	Kopeks = -2
 )
 
 // ReSumm регулярное выражение для разбора текстового представления числа с плавающей запятой
@@ -28,7 +28,7 @@ func SumToString(d string, currency int, gender bool) (res string, err error) {
 		if currency == Roubles {
 			return "ноль рублей", nil
 		}
-			return "ноль копеек", nil
+		return "ноль копеек", nil
 	}
 
 	s := strings.Split(d, "")
@@ -177,13 +177,13 @@ func BigFloatToNotesAndCoins(d *big.Float) (notes, coins string, err error) {
 func StringToNotesAndCoins(d string) (notes, coins string, err error) {
 
 	if ReSumm.MatchString(d) == false {
-		err = fmt.Errorf("Summ is not a digit: %s", d)
+		err = fmt.Errorf("summ is not a digit: %s", d)
 	} else {
 		if n, _, err := big.ParseFloat(strings.Replace(d, ",", ".", -1), 10, 53, big.AwayFromZero); err == nil {
 			notes, coins, err = BigFloatToNotesAndCoins(n)
 		} else {
 			err = fmt.Errorf("summ is not a big.Float: %s", d)
-			return "","", err
+			return "", "", err
 		}
 	}
 	return

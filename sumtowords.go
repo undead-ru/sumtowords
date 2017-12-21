@@ -12,12 +12,14 @@ var (
 	Kopeks  = -2
 )
 
+// Resumm регулярное выражение для разбора текстового представления числа с плавающей запятой
 var ReSumm = regexp.MustCompile(`^\d+([\.|\,]){0,1}\d*$`)
 
+// SumToString переводит числовое представление суммы в рублях в текстовое
 func SumToString(d string, currency int, gender bool) (res string, err error) {
 
 	if ReSumm.MatchString(d) == false {
-		return "", fmt.Errorf("Summ pattern didn't match")
+		return "", fmt.Errorf("summ pattern didn't match: %v", d)
 	}
 
 	if d == "0" || d == "00" {
@@ -149,6 +151,7 @@ var numbers = map[string]numberTypes{
 	"900": numberTypes{a: "девятьсот "},
 }
 
+// BigFloatToNotesAndCoins переводит число в формате big.Float в рубли и копейки
 func BigFloatToNotesAndCoins(d *big.Float) (notes, coins string, err error) {
 
 	s := strings.Split(d.SetMode(big.AwayFromZero).Text('f', 2), ".")
@@ -169,6 +172,7 @@ func BigFloatToNotesAndCoins(d *big.Float) (notes, coins string, err error) {
 	return
 }
 
+// StringToNotesAndCoins переводит строку содержащую число в рубли и копейки
 func StringToNotesAndCoins(d string) (notes, coins string, err error) {
 
 	if ReSumm.MatchString(d) == false {
